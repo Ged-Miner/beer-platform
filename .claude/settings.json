@@ -102,6 +102,7 @@
 
       "Read(~/.aws/sso/cache/**)",
       "Read(~/.aws/cli/cache/**)",
+      "Read(~/.aws/login/cache/**)",
       "Read(~/.aws/credentials)",
       "Read(~/.ssh/**)",
       "Read(~/.config/gh/**)",
