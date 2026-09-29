@@ -32,6 +32,6 @@ The project has two goals:
 | 3. Domain model | Done (first pass) |
 | 4. Non-functional requirements | Done (draft) |
 | 5. Architecture sketch and stack ADRs | Done (ADRs 0010–0024) |
-| 6. Walking skeleton (deploy "hello world" through the full pipeline) | Next (in Claude Code, see `CLAUDE.md`) |
+| 6. Walking skeleton (deploy "hello world" through the full pipeline) | In progress (see `progress-log.md`) |
 
 Technology choices are intentionally absent from these docs until step 5. Every stack decision should trace back to a journey or a non-functional requirement.
