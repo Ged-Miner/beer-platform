@@ -66,6 +66,7 @@ Every requirement here should be measurable: a monitored SLO, an automated test,
 
 - **Demo track ceiling: ¥5,000 per month, including consumption tax** (~$29 of usage at ~154 JPY/USD, September 2026). See ADR 0008.
 - AWS Budgets alerts at 50%, 80%, and 100% of the ceiling; forecast alert at 100%.
+- Cost Anomaly Detection: AWS-managed linked-account monitor in the management account, daily summary, absolute threshold of $5 (percentage thresholds cannot fire while expected spend is zero).
 - Cost-allocation tags on every resource (environment, component).
 - No idle fixed costs: no VPC, NAT Gateway, load balancer, or Kubernetes control plane in the Demo track (ADRs 0011, 0012).
 - Staging is always on (ADR 0019); with no idle fixed costs its cost is near zero when unused.

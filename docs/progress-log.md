@@ -2,6 +2,33 @@
 
 Newest entries at the top. Update at the end of every working session.
 
+## 2026-10-01: Cost guardrails verified, pnpm 11 pinned
+
+**Done**
+- Re-checked cost guardrails in the management account (`beer-mgmt-admin`):
+  - Budget `beerfinder-monthly` (via `aws budgets describe-budgets`): $30/month, no filters (whole organization, including the workload account), `UnblendedCost`, alerts at 50/80/100% actual and forecasted; emails verified.
+  - Cost Anomaly Detection had only the default AWS services monitor, with a `$100 AND 40%` subscription that cannot fire at our scale. Added AWS-managed **Linked account** monitor `org-linked-accounts` with subscription `beer-anomaly-daily` (daily summaries, absolute $5). Manual console change; not in Terraform.
+- pnpm 10.32.1 → **11.28.2** (standalone install, `pnpm self-update`). Chose 11 over 12 (Rust rewrite released 2026-08-26) for maturity; 12 later as a planned upgrade.
+- Root `package.json`: `private`, `type: module`, pnpm pinned exactly via `devEngines.packageManager` (`onFail: download`). `pnpm-lock.yaml` records the pnpm resolution with integrity hashes.
+
+**Learned**
+- An unfiltered budget in the management account covers the whole organization: the filter decides the scope, not the name.
+- Budgets and Cost Explorer always display USD. ¥5,000 incl. tax ≈ $32; tax is included unless filtered out, so $30 leaves a small margin.
+- Cost Explorer only lists accounts that have cost data.
+- CAD percentage thresholds are N/A when expected spend is zero; use absolute thresholds for new accounts.
+- `pnpm init` pinned pnpm 12.8.1 (the registry's latest), not the running 11.28.2, and wrote two pins. With `onFail: download` that would have silently switched pnpm. Always read generated files.
+
+**Open questions**
+- Does `pnpm/action-setup` read `devEngines.packageManager`, or only `packageManager`? Check when writing CI.
+- Repository license (public repo; none chosen yet).
+- Node 26 Active LTS timing (ADR 0013 expects October 2026; still "Current" on 2026-10-01).
+
+**Next up**
+1. `.nvmrc` (Node 24.21.0) and `pnpm-workspace.yaml` (package globs, release-age and `allowBuilds` settings), verifying pnpm 11 setting names first.
+2. TypeScript base config (strict) and a trivial `packages/shared`.
+3. Terraform bootstrap (ADR 0017) with `beer-workload-admin`; upgrade Terraform 1.16.1 → 1.16.4 first.
+
+
 ## 2026-09-29: AWS account structure fixed (ADR 0024 now actually in place)
 
 **Done**
@@ -20,9 +47,12 @@ Newest entries at the top. Update at the end of every working session.
 - Two timers: the permission-set session (how long role credentials last) and the Identity Center user session (when you must sign in again). Short admin sessions limit how long stolen cached credentials stay useful.
 - Minimize root use: CloudTrail attributes Identity Center actions to a named user and an expiring session.
 
+- Branch ruleset `main` active: PR required (0 approvals, solo owner), squash-only, linear history, no force pushes or deletions, **empty bypass list**. Required status checks to be added once the first CI workflow has run.
+- First PR (#1) merged via squash.
+
 **Next up**
-1. Branch ruleset on `main` (doc 07), then the first PR (settings.json change, progress log, README status).
-2. Check that budgets and Cost Anomaly Detection in the management account cover the new member account.
+1. Tidy up: `git branch -D chore/settings-and-progress-log` (`-D` because squash merges leave the branch looking unmerged), `git push origin --delete chore/settings-and-progress-log`, `git fetch --prune`; enable "Automatically delete head branches" in repo settings.
+2. Check that budgets and Cost Anomaly Detection in the management account cover the new member account (Claude verifies AWS docs first; console check as `beer-mgmt-admin`).
 3. Walking skeleton: pnpm workspace + TypeScript scaffolding, then Terraform bootstrap (ADR 0017) with `beer-workload-admin`.
 
 ## 2026-09-28: Repository live, safety rules in place, AWS profile problem found
