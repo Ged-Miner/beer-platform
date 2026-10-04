@@ -1,0 +1,12 @@
+{
+  "name": "beer-platform",
+  "private": true,
+  "type": "module",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "11.28.2",
+      "onFail": "download"
+    }
+  }
+}
