@@ -1,0 +1,10 @@
+# Workspace packages (layout from ADR 0013). The root package is always included.
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+# Supply chain (ADR 0013): only install versions published at least 1 day ago.
+# The value is in minutes. Strict means resolution fails instead of falling
+# back to a newer version.
+minimumReleaseAge: 1440
+minimumReleaseAgeStrict: true
