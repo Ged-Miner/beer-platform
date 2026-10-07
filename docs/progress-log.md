@@ -2,6 +2,35 @@
 
 Newest entries at the top. Update at the end of every working session.
 
+## 2026-10-04: Workspace scaffold and TypeScript base
+
+**Done**
+- PR #3: `.nvmrc` (Node 24.21.0, exact), `pnpm-workspace.yaml` (`apps/*`, `packages/*`; `minimumReleaseAge: 1440` with `minimumReleaseAgeStrict: true`), `node_modules/` ignored.
+- TypeScript **6.0.3** pinned exactly as a root devDependency. Chose 6.0 over 7.0.2 (the native rewrite, `latest` on npm): 7.0 has no stable programmatic API yet, so tools such as typescript-eslint still need 6.0. 7 later as a planned upgrade.
+- `tsconfig.base.json`: `strict`, `noUncheckedIndexedAccess`, `verbatimModuleSyntax`, `skipLibCheck`. Module and output settings live in each package's own config.
+- `packages/shared` (`@beer-platform/shared`): `Language` type and `LANGUAGES`; `module: nodenext`, `noEmit`; a `typecheck` script, run for the whole workspace with `pnpm -r run typecheck`.
+- Saw both guardrails fire: `pnpm config get minimumReleaseAgeStrict` returns `true`; an unchecked index access fails the type-check with exit code 2.
+
+**Learned**
+- A pushed branch lives in three places (GitHub, the remote-tracking ref, the local branch); auto-delete on merge removes only the first. After a merge: `git switch main`, `git pull --prune`, `git branch -D <branch>`.
+- `pnpm-lock.yaml` is two YAML documents: the pinned pnpm itself, then the project's dependencies.
+- `pnpm config get` shows configured values, not derived defaults. Set security settings explicitly so they can be read back.
+- pnpm 11: the built-in `minimumReleaseAge` (1440) is non-strict unless set explicitly. Unlisted build scripts are denied and fail the install, so `allowBuilds` is only needed when a dependency asks for one.
+- TypeScript does not follow semver; minor releases can add new errors. Pin exactly (`-E`).
+- Types are always erased. `verbatimModuleSyntax` is about import and export statements (`import type`).
+- `tsc` is silent on success; the exit code is what CI acts on.
+
+**Open questions**
+- How `packages/shared` is consumed (compiled `dist` or source): decide with the first consumer, `apps/api`.
+- `exactOptionalPropertyTypes`: revisit when shared has real schemas.
+- Linter and formatter choice (typescript-eslint needs the TypeScript 6 API).
+- Carried over: `pnpm/action-setup` and `devEngines.packageManager`; repository license; Node 26 Active LTS timing (still "Current" on 2026-10-04).
+
+**Next up**
+1. Terraform 1.16.1 → latest 1.16.x (verify first), then the bootstrap (ADR 0017) with `beer-workload-admin`.
+2. Linting and formatting tools; first CI workflow running `typecheck`; then add required status checks to the `main` ruleset.
+3. `apps/api` hello world that imports `@beer-platform/shared`.
+
 ## 2026-10-01: Cost guardrails verified, pnpm 11 pinned
 
 **Done**

@@ -1,0 +1,11 @@
+{
+  // Shared type-checking rules for every package. Module, target and output
+  // settings differ between Node and browser packages, so they live in each
+  // package's own tsconfig.json.
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true
+  }
+}

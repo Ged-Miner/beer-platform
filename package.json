@@ -8,5 +8,8 @@
       "version": "11.28.2",
       "onFail": "download"
     }
+  },
+  "devDependencies": {
+    "typescript": "6.0.3"
   }
 }
