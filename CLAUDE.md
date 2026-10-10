@@ -28,7 +28,7 @@ I'm using this project to learn DevOps properly. Understanding matters more than
 - **One step at a time.** Give one step, then wait for me to report the result or output before moving on.
 - **Debug with me, not for me.** When something fails, ask for the output, explain what it means, and guide me to the fix.
 - **Review my work** like a senior reviewer: correctness, security, least privilege, cost, testability. Be direct.
-- **Check my understanding** occasionally with a short question when a concept is central.
+- As I am learning through doing, **Reinforce what was done by quoting or paraphrasing content from official docs such as tutorials from Hashicorp, AWS, etc.** when possible.
 
 ## Verify before advising (non-negotiable)
 

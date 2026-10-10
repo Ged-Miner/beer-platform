@@ -2,6 +2,41 @@
 
 Newest entries at the top. Update at the end of every working session.
 
+## 2026-10-10: Terraform 1.16.5 and the state bucket (bootstrap, part 1)
+
+**Done**
+- Terraform 1.16.1 → **1.16.5** from HashiCorp's apt repository, installed as `terraform=1.16.5-1` and held with `apt-mark hold`.
+  - The repository source had been disabled by the Ubuntu 22.04 → 24.04 upgrade (2026-09-04), and HashiCorp rotated its package signing key on 2026-09-10. Replaced the key (fingerprint `D55C … 6560`, checked against hashicorp.com) and re-added the source for `noble`.
+- `infra/bootstrap`: `versions.tf` (Terraform `~> 1.16.5`, AWS provider `~> 6.68`, locked at 6.68.0), `providers.tf` (Tokyo, `allowed_account_ids`, default tags), `state-bucket.tf`.
+- State bucket `beer-platform-tfstate-<account-id>-ap-northeast-1-an` created with `beer-workload`: account regional namespace, versioning, SSE-S3, all public access blocked, `prevent_destroy`.
+- Bootstrap state migrated from local into the bucket (`bootstrap/terraform.tfstate`, `use_lockfile = true`) with `terraform init -migrate-state`; `plan` reports no changes.
+
+**Decisions** (details ADR 0017 left open)
+- Bootstrap state: local for the first apply, then migrated into the bucket it created.
+- Bucket name in the S3 account regional namespace, so only this account can ever create it. The account ID is visible in a public repo; AWS does not treat account IDs as secret.
+- One bucket, one key per root module (`bootstrap/` now; `staging/` and `production/` later).
+- The bucket half needs only S3 permissions, so it was applied with PowerUserAccess. `beer-workload-admin` is for the IAM half only.
+
+**Learned**
+- apt can only upgrade to versions listed in a repository index; a package with no source stays frozen with no warning. In `apt-cache policy`, `500` and `100` are priorities, not errors.
+- Release upgrades disable third-party apt sources and leave `*.distUpgrade` backups.
+- HTTPS proves which server you reached, not that the server is honest. A fingerprint published on a second site is a separate check.
+- A version constraint (`~>`) is the allowed range; `.terraform.lock.hcl` is the chosen version plus checksums. `terraform init -upgrade` moves it.
+- A `backend` block accepts literal values only: no functions, variables or data sources.
+- "No changes" from `plan` after a state migration is the proof that it worked.
+
+**Open questions**
+- State bucket hardening: a TLS-only bucket policy, and a lifecycle rule to expire old noncurrent versions.
+- Whether CI role ARNs (which contain the account ID) go in workflow files or GitHub variables.
+- Docker, GitHub CLI and VS Code apt sources are still disabled since the release upgrade; 108 system updates pending.
+- Carried over: how `packages/shared` is consumed; `exactOptionalPropertyTypes`; linter and formatter choice; `pnpm/action-setup` and `devEngines.packageManager`; repository license; Node 26 Active LTS timing.
+
+**Next up**
+1. Bootstrap part 2 with `beer-workload-admin`: GitHub OIDC provider and CI roles (ADR 0016), then the bootstrap runbook (ADR 0017).
+2. Linting and formatting tools; first CI workflow running `typecheck`; then required status checks on the `main` ruleset.
+3. `apps/api` hello world that imports `@beer-platform/shared`.
+
+
 ## 2026-10-04: Workspace scaffold and TypeScript base
 
 **Done**
